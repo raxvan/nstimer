@@ -16,6 +16,12 @@ namespace nstimer
 		{
 			return std::chrono::high_resolution_clock::now();
 		}
+		static inline int64_t				deltans(const time_capture_t & a,const time_capture_t & b)
+		{
+			auto delta = b - a;
+			auto value = std::chrono::duration_cast<std::chrono::nanoseconds>(delta);
+			return (int64_t)value.count();
+		}
 
 	public:
 		std_timer() = default;
@@ -28,11 +34,9 @@ namespace nstimer
 
 		//returns time since init() or since this->constructor()
 		//depends on which was called the last
-		inline int64_t		getns(const time_capture_t & point) const //since 1970
+		inline int64_t		getns(const time_capture_t & point) const
 		{
-			auto delta = point - m_init_time;
-			auto value = std::chrono::duration_cast<std::chrono::nanoseconds>(delta);
-			return (int64_t)value.count();
+			return deltans(m_init_time,point);
 		}
 		
 	protected:
