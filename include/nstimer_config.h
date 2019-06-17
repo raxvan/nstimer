@@ -4,4 +4,4 @@
 
 #define NSTIMER_DEFAULT_STD
 
-#define NSTIMER_SINGLETON
+#define NSTIMER_CUSTOM

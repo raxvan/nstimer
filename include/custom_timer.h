@@ -4,12 +4,12 @@
 #include "nstimer_config.h"
 #include "std_timer.h"
 
-#ifdef NSTIMER_SINGLETON
+#ifdef NSTIMER_CUSTOM
 #include <array>
 namespace nstimer
 {
 
-	struct singleton_info
+	struct custom_timer_info
 	{
 	public:
 		using storage_t = std::array<char,32>;
@@ -23,7 +23,7 @@ namespace nstimer
 	//--------------------------------------------------------------------------------------------------------
 
 	template <class T>
-	struct singleton_adapter_impl;
+	struct custom_timer_adapter_impl;
 
 	//--------------------------------------------------------------------------------------------------------
 
@@ -31,38 +31,38 @@ namespace nstimer
 	struct singleton_adapter_std_timer
 	{
 		using time_capture_t = std_timer::time_capture_t;
-		using callback_ptr_t = time_capture_t(*)(const singleton_info::storage_t&);
+		using callback_ptr_t = time_capture_t(*)(const custom_timer_info::storage_t&);
 
-		static time_capture_t (*_callback)(const singleton_info::storage_t &);
+		static time_capture_t (*_callback)(const custom_timer_info::storage_t &);
 		static inline time_capture_t capture_now_time()
 		{
 			if(_callback != nullptr)
-				return _callback(singleton_info::g_storage);
+				return _callback(custom_timer_info::g_storage);
 			return std_timer::capture_now_time();
 		}
-		static inline singleton_info::storage_t& reset(callback_ptr_t _func)
+		static inline custom_timer_info::storage_t& reset(callback_ptr_t _func)
 		{
 			_callback = _func;
-			return singleton_info::g_storage;
+			return custom_timer_info::g_storage;
 		}
 	};
 	template <>
-	struct singleton_adapter_impl <std_timer>
+	struct custom_timer_adapter_impl <std_timer>
 		: public singleton_adapter_std_timer
 	{
 	};
 #endif
 
 	template <class T>
-	struct singleton_timer : public singleton_adapter_impl<T>
+	struct custom_timer : public custom_timer_adapter_impl<T>
 	{
 	public:
-		using base_t = singleton_adapter_impl<T>;
-		using singleton_adapter_impl<T>::reset;
+		using base_t = custom_timer_adapter_impl<T>;
+		using custom_timer_adapter_impl<T>::reset;
 		
 		inline void 		reset()
 		{
-			m_init_time = singleton_adapter_impl<T>::capture_now_time();
+			m_init_time = custom_timer_adapter_impl<T>::capture_now_time();
 		}
 		inline int64_t 		cast_ns(const typename base_t::time_capture_t & p) const
 		{
@@ -70,7 +70,7 @@ namespace nstimer
 		}
 		
 	protected:
-		typename base_t::time_capture_t 	m_init_time = singleton_adapter_impl<T>::capture_now_time();
+		typename base_t::time_capture_t 	m_init_time = custom_timer_adapter_impl<T>::capture_now_time();
 	};
 
 	
