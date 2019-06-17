@@ -12,7 +12,7 @@ void wait()
 int64_t one_second = 1000000000;
 
 std_timer gTimer;
-singleton_timer<std_timer> gsTimer;
+custom_timer<std_timer> gsTimer;
 
 template <class A, class T>
 int test_timer(T * t)
@@ -163,7 +163,7 @@ bool run_tests(T * global_timer)
 	return true;
 }
 std_timer::time_capture_t ref_time = std_timer::capture_now_time();
-std_timer::time_capture_t get_time(const singleton_info::storage_t&)
+std_timer::time_capture_t get_time(const custom_timer_info::storage_t&)
 {
 	using namespace std::chrono_literals;
 	static bool increment_by_100 = false;
@@ -180,12 +180,12 @@ int main()
 	if(run_tests<std_timer,std_timer>(&gTimer) == false)
 		return -1;
 	
-	if(run_tests<singleton_timer<std_timer>,std_timer>(&gTimer) == false)
+	if(run_tests<custom_timer<std_timer>,std_timer>(&gTimer) == false)
 		return -1;
 
-	singleton_timer<std_timer>::reset(get_time);
+	custom_timer<std_timer>::reset(get_time);
 
-	if(run_tests< singleton_timer<std_timer>, singleton_timer<std_timer> >(&gsTimer) == false)
+	if(run_tests< custom_timer<std_timer>, custom_timer<std_timer> >(&gsTimer) == false)
 		return -1;
 
 	std::cout << "OK.\n";
