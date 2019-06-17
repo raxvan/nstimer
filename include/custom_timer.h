@@ -45,6 +45,10 @@ namespace nstimer
 			_callback = _func;
 			return custom_timer_info::g_storage;
 		}
+		static inline int64_t delta_ns(const time_capture_t & a,const time_capture_t & b)
+		{
+			return std_timer::delta_ns(a,b);
+		}
 	};
 	template <>
 	struct custom_timer_adapter_impl <std_timer>
