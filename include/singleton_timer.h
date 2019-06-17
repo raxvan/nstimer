@@ -58,13 +58,15 @@ namespace nstimer
 	{
 	public:
 		using base_t = singleton_adapter_impl<T>;
-		inline void 		init()
+		using singleton_adapter_impl<T>::reset;
+		
+		inline void 		reset()
 		{
 			m_init_time = singleton_adapter_impl<T>::capture_now_time();
 		}
-		inline int64_t 		getns(const typename base_t::time_capture_t & p) const
+		inline int64_t 		cast_ns(const typename base_t::time_capture_t & p) const
 		{
-			return T::deltans(m_init_time,p);
+			return T::delta_ns(m_init_time,p);
 		}
 		
 	protected:

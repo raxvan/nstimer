@@ -3,8 +3,7 @@ import srcbuild
 
 ctx = srcbuild.Generator()
 
-ctx.run(
-	kind = "exe",
+ctx.run("exe",
 	depends = [
 		"prj.nstimer.py"
 	],

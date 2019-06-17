@@ -21,39 +21,39 @@ int test_timer(T * t)
 	auto a = A::capture_now_time(); //<<--- A
 	wait();
 
-	auto a0 = t->getns(a);
+	auto a0 = t->cast_ns(a);
 
 	wait();
 	auto b = A::capture_now_time(); //<<--- B
 	wait();
 	
-	auto a1 = t->getns(a); //A
-	auto b1 = t->getns(b); //B
+	auto a1 = t->cast_ns(a); //A
+	auto b1 = t->cast_ns(b); //B
 	
 	wait();
-	t->init(); //<<--- C 
+	t->reset(); //<<--- C 
 	wait();
 
-	auto b2 = t->getns(b); //B - C
-	auto a2 = t->getns(a); //A - C
+	auto b2 = t->cast_ns(b); //B - C
+	auto a2 = t->cast_ns(a); //A - C
 	
 	
 	wait();
 	auto d = A::capture_now_time(); //<<--- D
 	wait();
 
-	auto a3 = t->getns(a);
-	auto d3 = t->getns(d);
-	auto b3 = t->getns(b);
+	auto a3 = t->cast_ns(a);
+	auto d3 = t->cast_ns(d);
+	auto b3 = t->cast_ns(b);
 
 	wait();
 	auto e = A::capture_now_time(); //<<--- E
 	wait();
 
-	auto d4 = t->getns(d);
-	auto e4 = t->getns(e);
-	auto a4 = t->getns(a);
-	auto b4 = t->getns(b);
+	auto d4 = t->cast_ns(d);
+	auto e4 = t->cast_ns(e);
+	auto a4 = t->cast_ns(a);
+	auto b4 = t->cast_ns(b);
 
 	if(! (a0 >= 0 && a0 == a1))
 		return 1;
@@ -99,20 +99,20 @@ int test_timer_local()
 	auto a = A::capture_now_time(); //<<--- A
 	wait();
 
-	//auto a0 = t->getns(a);
+	//auto a0 = t->cast_ns(a);
 
 	wait();
 	T local;
 	wait();
 
-	auto a1 = local.getns(a);
+	auto a1 = local.cast_ns(a);
 
 	wait();
 	auto b = A::capture_now_time(); //<<--- B
 	wait();
 
-	auto a2 = local.getns(a);
-	auto b2 = local.getns(b);
+	auto a2 = local.cast_ns(a);
+	auto b2 = local.cast_ns(b);
 	
 
 	if(! (a1 < 0) )
@@ -166,8 +166,12 @@ std_timer::time_capture_t ref_time = std_timer::capture_now_time();
 std_timer::time_capture_t get_time(const singleton_info::storage_t&)
 {
 	using namespace std::chrono_literals;
-	
-	ref_time += 1ms;
+	static bool increment_by_100 = false;
+	if(increment_by_100)
+		ref_time += 101ms;
+	else
+		ref_time += 1ms;
+	increment_by_100 = !increment_by_100;
 	return ref_time;
 }
 

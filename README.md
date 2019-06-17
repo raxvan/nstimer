@@ -1,1 +1,1 @@
-just a nanosecond timing lib.
+just a nanosecond timing boilerplate.
