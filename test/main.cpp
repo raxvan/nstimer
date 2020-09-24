@@ -304,7 +304,7 @@ int main()
 	if(test1_err || test2_err || test3_err)
 	{
 		std::cout << "FAILED.\n";
-		return -1
+		return -1;
 	}
 	else
 	{
