@@ -33,6 +33,8 @@ namespace nstimer
 		using callback_ptr_t = time_capture_t (*)(const custom_timer_info::storage_t&);
 
 		static time_capture_t (*_callback)(const custom_timer_info::storage_t&);
+
+	public:
 		static inline time_capture_t capture_now_time()
 		{
 			if (_callback != nullptr)
@@ -71,6 +73,10 @@ namespace nstimer
 			return T::delta_ns(m_init_time, p);
 		}
 
+		inline typename base_t::time_capture_t get() const
+		{
+			return m_init_time;
+		}
 	protected:
 		typename base_t::time_capture_t m_init_time = custom_timer_adapter_impl<T>::capture_now_time();
 	};

@@ -2,12 +2,14 @@
 #include <nstimer.h>
 #include <iostream>
 #include <thread>
+
 using namespace nstimer;
 
 void wait()
 {
 	using namespace std::chrono_literals;
 	std::this_thread::sleep_for(10ms);
+	std::this_thread::yield();
 }
 int64_t one_second = 1000000000;
 
@@ -15,8 +17,9 @@ std_timer				gTimer;
 custom_timer<std_timer> gsTimer;
 
 template <class A, class T>
-int test_timer(T* t)
+void test_timer(T* t, bool& err)
 {
+	err = false;
 	wait();
 	auto a = A::capture_now_time(); //<<--- A
 	wait();
@@ -55,136 +58,257 @@ int test_timer(T* t)
 	auto b4 = t->cast_ns(b);
 
 	if (!(a0 >= 0 && a0 == a1))
-		return 1;
+	{
+		std::cerr << "Failed test_timer case 1" << std::endl;
+		err = true;
+	}
 
 	if (!(b1 > 0 && a1 < b1))
-		return 2;
+	{
+		std::cerr << "Failed test_timer case 2" << std::endl;
+		err = true;
+	}
 
 	if (!(a2 < 0 && b2 < 0))
-		return 3;
+	{
+		std::cerr << "Failed test_timer case 3" << std::endl;
+		err = true;
+	}
 
 	if (!(a2 < b2))
-		return 4;
+	{
+		std::cerr << "Failed test_timer case 4" << std::endl;
+		err = true;
+	}
 
 	if (!(a2 == a3 && a3 == a4))
-		return 5;
+	{
+		std::cerr << "Failed test_timer case 5" << std::endl;
+		err = true;
+	}
 
 	if (!(b2 == b4 && b3 == b4))
-		return 6;
+	{
+		std::cerr << "Failed test_timer case 6" << std::endl;
+		err = true;
+	}
 
 	if (!(d3 > 0 && d3 == d4))
-		return 7;
+	{
+		std::cerr << "Failed test_timer case 7" << std::endl;
+		err = true;
+	}
 
 	if (!(d3 < e4))
-		return 8;
+	{
+		std::cerr << "Failed test_timer case 8" << std::endl;
+		err = true;
+	}
 
 	if (std::abs(a0) > one_second || std::abs(a1) > one_second || std::abs(a2) > one_second || std::abs(a3) > one_second || std::abs(a4) > one_second)
-		return 9;
+	{
+		std::cerr << "Failed test_timer case 9" << std::endl;
+		err = true;
+	}
 
 	if (std::abs(b1) > one_second || std::abs(b2) > one_second || std::abs(b3) > one_second || std::abs(b4) > one_second)
-		return 10;
+	{
+		std::cerr << "Failed test_timer case 10" << std::endl;
+		err = true;
+	}
 
 	if (std::abs(d3) > one_second || std::abs(d4) > one_second)
-		return 11;
+	{
+		std::cerr << "Failed test_timer case 11" << std::endl;
+		err = true;
+	}
 	if (std::abs(e4) > one_second)
-		return 11;
+	{
+		std::cerr << "Failed test_timer case 12" << std::endl;
+		err = true;
+	}
 
-	return 0;
 }
 template <class A, class T>
-int test_timer_local()
+void test_timer_local(bool& err)
 {
 	wait();
-	auto a = A::capture_now_time(); //<<--- A
-	wait();
 
-	// auto a0 = t->cast_ns(a);
+	auto start_time = A::capture_now_time(); //<<--- A
 
 	wait();
+
 	T local;
-	wait();
-
-	auto a1 = local.cast_ns(a);
 
 	wait();
-	auto b = A::capture_now_time(); //<<--- B
+
+	auto delta1 = local.cast_ns(start_time);
+
 	wait();
 
-	auto a2 = local.cast_ns(a);
-	auto b2 = local.cast_ns(b);
+	auto end_time = A::capture_now_time(); //<<--- B
 
-	if (!(a1 < 0))
-		return 101;
+	wait();
 
-	if (!(a1 == a2))
-		return 102;
+	auto delta2 = local.cast_ns(start_time);
+	auto delta3 = local.cast_ns(end_time);
 
-	if (!(b2 > 0))
-		return 103;
+	if (!(delta1 < 0))
+	{
+		std::cerr << "Failed test_timer_local case 1 [" << delta1 << "]\n";
+		err = true;
+	}
 
-	if (std::abs(a1) > one_second || std::abs(a2) > one_second)
-		return 104;
-	if (std::abs(b2) > one_second)
-		return 105;
+	if (!(delta1 == delta2))
+	{
+		std::cerr << "Failed test_timer_local case 2" << std::endl;
+		err = true;
+	}
 
-	return test_timer<A, T>(&local);
+	if (!(delta3 > 0))
+	{
+		std::cerr << "Failed test_timer_local case 2" << std::endl;
+		err = true;
+	}
+
+	if (std::abs(delta1) > one_second || std::abs(delta2) > one_second)
+	{
+		std::cerr << "Failed test_timer_local case 3" << std::endl;
+		err = true;
+	}
+	if (std::abs(delta2) > one_second)
+	{
+		std::cerr << "Failed test_timer_local case 4" << std::endl;
+		err = true;
+	}
+
+	{
+		bool err2;
+		test_timer<A, T>(&local,err2);
+		err = err || err2;
+	}
 }
 
 template <class A, class T>
 bool run_tests(T* global_timer)
 {
-	int r;
 
+	bool err = false;
 	// before global test
-	r = test_timer_local<A, T>();
-	if (r != 0)
+	test_timer_local<A, T>(err);
+	if( err == true)
 	{
-		std::cerr << "pre test_timer_local<A,T> FAILED:" << r << std::endl;
-		return false;
+		std::cerr << "test_timer_local[1] FAILED" << std::endl;
 	}
 
-	r = test_timer<A, T>(global_timer);
-	if (r != 0)
+	test_timer<A, T>(global_timer);
+	if( err == true)
 	{
-		std::cerr << "test_timer<A,T> FAILED:" << r << std::endl;
-		return false;
+		std::cerr << "test_timer FAILED" << std::endl;
 	}
 
 	// after global test
-	r = test_timer_local<A, T>();
-	if (r != 0)
+	test_timer_local<A, T>();
+	if( err == true)
 	{
-		std::cerr << "post test_timer_local<A,T> FAILED:" << r << std::endl;
-		return false;
+		std::cerr << "test_timer_local[2] FAILED" << std::endl;
 	}
-	return true;
+
+	return err;
 }
-std_timer::time_capture_t ref_time = std_timer::capture_now_time();
+
+std_timer::time_capture_t g_global_time = std_timer::capture_now_time();
+
 std_timer::time_capture_t get_time(const custom_timer_info::storage_t&)
 {
-	using namespace std::chrono_literals;
+	
 	static bool increment_by_100 = false;
+#ifdef NSTIMER_DEFAULT_STD_CHRONO_IMPL
+	using namespace std::chrono_literals;
 	if (increment_by_100)
-		ref_time += 101ms;
+		g_global_time += 101ms;
 	else
-		ref_time += 1ms;
+		g_global_time += 1ms;
+#endif
+
+#ifdef NSTIMER_DEFAULT_STD_POSIX_IMPL
+	using namespace std::chrono_literals;
+	if (increment_by_100)
+		g_global_time.tv_nsec += 1000 * 100;
+	else
+		g_global_time.tv_nsec += 1000;
+#endif
 	increment_by_100 = !increment_by_100;
-	return ref_time;
+	return g_global_time;
 }
 
+
+bool checking_std_high_resolution_clock()
+{
+	std::cout << "checking_std_high_resolution_clock:\n";
+
+	using namespace std::chrono_literals;
+	
+	auto start = std::chrono::high_resolution_clock::now();
+
+	std::this_thread::sleep_for(1ms);
+
+	auto end = std::chrono::high_resolution_clock::now();
+
+	auto delta = end - start;
+	auto value = std::chrono::duration_cast<std::chrono::nanoseconds>(delta);
+	int64_t iv = (int64_t)value.count();
+
+	std::cout << "1 ms sleep -> " << iv << " (int64_t)ns" << std::endl;
+	std::cout << "1 ms sleep -> " << value.count() << " ns" << std::endl;
+
+	return true;
+}
+
+bool checking_clock_impl()
+{
+	std::cout << "checking_clock_impl:\n";
+
+	using namespace std::chrono_literals;
+
+	auto start = std_timer::capture_now_time();
+
+	std::this_thread::sleep_for(1ms);
+
+	auto end = std_timer::capture_now_time();
+
+	int64_t iv = std_timer::delta_ns(start,end);
+
+	std::cout << "1 ms sleep -> " << iv << " ns" << std::endl;
+
+	return true;
+}
 int main()
 {
-	if (run_tests<std_timer, std_timer>(&gTimer) == false)
-		return -1;
+	checking_std_high_resolution_clock();
+	
+	checking_clock_impl();
 
-	if (run_tests<custom_timer<std_timer>, std_timer>(&gTimer) == false)
-		return -1;
+	std::cout << "Running test `std_timer`\n";
+	auto test1_err = run_tests<std_timer, std_timer>(&gTimer);
 
+	std::cout << "Running test `std_timer`\n";
+	auto test2_err = run_tests<custom_timer<std_timer>, std_timer>(&gTimer);
+		
+
+	std::cout << "Running test `custom_timer<std_timer>/callback`\n";
 	custom_timer<std_timer>::reset(get_time);
 
-	if (run_tests<custom_timer<std_timer>, custom_timer<std_timer>>(&gsTimer) == false)
-		return -1;
+	auto test3_err = run_tests<custom_timer<std_timer>, custom_timer<std_timer>>(&gsTimer);
 
-	std::cout << "OK.\n";
-	return 0;
+	if(test1_err || test2_err || test3_err)
+	{
+		std::cout << "FAILED.\n";
+		return -1
+	}
+	else
+	{
+		std::cout << "OK.\n";
+		return 0;
+	}
 }
