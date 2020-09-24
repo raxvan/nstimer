@@ -201,14 +201,14 @@ bool run_tests(T* global_timer)
 		std::cerr << "test_timer_local[1] FAILED" << std::endl;
 	}
 
-	test_timer<A, T>(global_timer);
+	test_timer<A, T>(global_timer,err);
 	if( err == true)
 	{
 		std::cerr << "test_timer FAILED" << std::endl;
 	}
 
 	// after global test
-	test_timer_local<A, T>();
+	test_timer_local<A, T>(err);
 	if( err == true)
 	{
 		std::cerr << "test_timer_local[2] FAILED" << std::endl;
