@@ -8,7 +8,7 @@ set "THIS_WORKSPACE=%~2"
 
 ::-------------------------------------------------------------------------------------
 ::compile and run
-powershell %MAIN_WORKSPACE%/exec.cmd %THIS_WORKSPACE% python3 /wcore/workspace/nstimer/prj.nstimer-test.py vs2019 win32
+powershell %MAIN_WORKSPACE%/exec.cmd %THIS_WORKSPACE% python3 /wcore/workspace/nstimer/prj.nstimer-test.py -a vs2019 win32
 
 cd %THIS_WORKSPACE%/nstimer/build/nstimer-test_win32_vs2019
 
