@@ -12,7 +12,7 @@ powershell %MAIN_WORKSPACE%/exec.cmd %THIS_WORKSPACE% python3 /wcore/workspace/n
 
 cd %THIS_WORKSPACE%/nstimer/build/nstimer-test_win32_vs2019
 
-"%ENVCONF_DEVENV%" _this_.sln /Build Debug
+"%ENVCONF_DEVENV%" _nstimer_test.sln /Build Debug
 
 "bin/x32/Debug/_nstimer-test.exe"
 
@@ -22,4 +22,4 @@ powershell %MAIN_WORKSPACE%/exec.cmd %THIS_WORKSPACE% python3 /wcore/workspace/n
 
 cd %THIS_WORKSPACE%/nstimer/build/nstimer_win32_vs2019
 
-"%ENVCONF_MSBUILD%" _this_.sln /m /p:RunCodeAnalysis=true /p:Configuration=Release /p:Platform=Win32
+"%ENVCONF_MSBUILD%" _nstimer.sln /m /p:RunCodeAnalysis=true /p:Configuration=Release /p:Platform=Win32
