@@ -77,6 +77,7 @@ namespace nstimer
 		{
 			return m_init_time;
 		}
+
 	protected:
 		typename base_t::time_capture_t m_init_time = custom_timer_adapter_impl<T>::capture_now_time();
 	};

@@ -47,6 +47,7 @@ namespace nstimer
 		{
 			return m_init_time;
 		}
+
 	protected:
 		time_capture_t m_init_time = std_timer::capture_now_time();
 	};
@@ -57,8 +58,8 @@ namespace nstimer
 //----------------------------------------------------------------------------------------------------------
 
 #ifdef NSTIMER_DEFAULT_STD_POSIX_IMPL
-#include <cstdint>
-#include <time.h>
+#	include <cstdint>
+#	include <time.h>
 
 namespace nstimer
 {
@@ -101,6 +102,7 @@ namespace nstimer
 		{
 			return m_init_time;
 		}
+
 	protected:
 		time_capture_t m_init_time = std_timer::capture_now_time();
 	};
