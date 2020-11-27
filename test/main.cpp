@@ -1,9 +1,9 @@
 
 #include <nstimer.h>
+#include <clock_counters.h>
 #include <iostream>
 #include <thread>
-
-using namespace nstimer;
+#include "checks.h"
 
 void wait()
 {
@@ -11,10 +11,12 @@ void wait()
 	std::this_thread::sleep_for(10ms);
 	std::this_thread::yield();
 }
+
 int64_t one_second = 1000000000;
 
-std_timer				gTimer;
-custom_timer<std_timer> gsTimer;
+nstimer::std_timer					gTimer;
+nstimer::callback_timer<nstimer::std_timer> 	gsTimer;
+nstimer::std_timer::time_capture_t 	g_global_time = nstimer::std_timer::capture_now_time();
 
 template <class A, class T>
 void test_timer(T* t, bool& err)
@@ -216,9 +218,9 @@ bool run_tests(T* global_timer)
 	return err;
 }
 
-std_timer::time_capture_t g_global_time = std_timer::capture_now_time();
 
-std_timer::time_capture_t get_time(const custom_timer_info::storage_t&)
+
+nstimer::std_timer::time_capture_t get_time_callback(const nstimer::callback_timer_storage::storage_t&)
 {
 
 	static bool increment_by_100 = false;
@@ -241,62 +243,19 @@ std_timer::time_capture_t get_time(const custom_timer_info::storage_t&)
 	return g_global_time;
 }
 
-bool checking_std_high_resolution_clock()
-{
-	std::cout << "checking_std_high_resolution_clock:\n";
-
-	using namespace std::chrono_literals;
-
-	auto start = std::chrono::high_resolution_clock::now();
-
-	std::this_thread::sleep_for(1ms);
-
-	auto end = std::chrono::high_resolution_clock::now();
-
-	auto	delta = end - start;
-	auto	value = std::chrono::duration_cast<std::chrono::nanoseconds>(delta);
-	int64_t iv = (int64_t)value.count();
-
-	std::cout << "1 ms sleep -> " << iv << " (int64_t)ns" << std::endl;
-	std::cout << "1 ms sleep -> " << value.count() << " ns" << std::endl;
-
-	return true;
-}
-
-bool checking_clock_impl()
-{
-	std::cout << "checking_clock_impl:\n";
-
-	using namespace std::chrono_literals;
-
-	auto start = std_timer::capture_now_time();
-
-	std::this_thread::sleep_for(1ms);
-
-	auto end = std_timer::capture_now_time();
-
-	int64_t iv = std_timer::delta_ns(start, end);
-
-	std::cout << "1 ms sleep -> " << iv << " ns" << std::endl;
-
-	return true;
-}
 int main()
 {
-	checking_std_high_resolution_clock();
-
-	checking_clock_impl();
+	std::cout << "Running test `std_timer`\n";
+	auto test1_err = run_tests<nstimer::std_timer, nstimer::std_timer>(&gTimer);
 
 	std::cout << "Running test `std_timer`\n";
-	auto test1_err = run_tests<std_timer, std_timer>(&gTimer);
-
-	std::cout << "Running test `std_timer`\n";
-	auto test2_err = run_tests<custom_timer<std_timer>, std_timer>(&gTimer);
+	auto test2_err = run_tests<nstimer::callback_timer<nstimer::std_timer>, nstimer::std_timer>(&gTimer);
 
 	std::cout << "Running test `custom_timer<std_timer>/callback`\n";
-	custom_timer<std_timer>::reset(get_time);
+	nstimer::callback_timer<nstimer::std_timer>::set_global_callback(get_time_callback);
 
-	auto test3_err = run_tests<custom_timer<std_timer>, custom_timer<std_timer>>(&gsTimer);
+	auto test3_err = run_tests<nstimer::callback_timer<nstimer::std_timer>, nstimer::callback_timer<nstimer::std_timer>>(&gsTimer);
+
 
 	if (test1_err || test2_err || test3_err)
 	{
@@ -306,6 +265,13 @@ int main()
 	else
 	{
 		std::cout << "OK.\n";
-		return 0;
 	}
+
+	{
+		checking_std_high_resolution_clock();
+		check_std_timer_impl();
+		check_platform_sleep_impl_impl();
+	}
+
+	return 0;
 }
