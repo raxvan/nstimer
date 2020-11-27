@@ -245,13 +245,13 @@ nstimer::std_timer::time_capture_t get_time_callback(const nstimer::callback_tim
 
 int main()
 {
-	std::cout << "Running test `std_timer`\n";
+	std::cout << "Running test local=[std_timer],global=[std_timer]\n";
 	auto test1_err = run_tests<nstimer::std_timer, nstimer::std_timer>(&gTimer);
 
-	std::cout << "Running test `std_timer`\n";
+	std::cout << "Running test local=[callback_timer<std_timer>],global=[std_timer]\n";
 	auto test2_err = run_tests<nstimer::callback_timer<nstimer::std_timer>, nstimer::std_timer>(&gTimer);
 
-	std::cout << "Running test `custom_timer<std_timer>/callback`\n";
+	std::cout << "Running test local/global=[callback_timer<std_timer>] + set_global_callback`\n";
 	nstimer::callback_timer<nstimer::std_timer>::set_global_callback(get_time_callback);
 
 	auto test3_err = run_tests<nstimer::callback_timer<nstimer::std_timer>, nstimer::callback_timer<nstimer::std_timer>>(&gsTimer);

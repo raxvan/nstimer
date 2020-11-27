@@ -52,7 +52,7 @@ void checking_std_high_resolution_clock()
 
 void check_std_timer_impl()
 {
-	std::cout << "check_clock_impl:\n";
+	std::cout << "check_std_timer_impl:\n";
 
 	using namespace std::chrono_literals;
 
@@ -89,7 +89,7 @@ void check_std_timer_impl()
 
 void check_platform_sleep_impl_impl()
 {
-	std::cout << "check_clock_impl:\n";
+	std::cout << "check_platform_sleep_impl_impl:\n";
 
 	using namespace std::chrono_literals;
 #ifdef PRJ_PLATFORM_IS_WIN32
