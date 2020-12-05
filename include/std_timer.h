@@ -26,7 +26,6 @@ namespace nstimer
 		{
 			return (r) * (int64_t)1e9;
 		}
-
 	public:
 		std_timer() = default;
 

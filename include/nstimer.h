@@ -22,4 +22,6 @@ namespace nstimer
 		static void print_nice_time(const char* name, const double nanoseconds);
 	};
 
+	extern void thread_sleep(int ms_time);
+
 }

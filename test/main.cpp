@@ -7,9 +7,15 @@
 
 void wait()
 {
-	using namespace std::chrono_literals;
-	std::this_thread::sleep_for(10ms);
+#ifdef NSTIMER_DEFAULT_STD_CHRONO_IMPL
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	std::this_thread::yield();
+#endif
+
+#ifdef NSTIMER_DEFAULT_STD_POSIX_IMPL
+	usleep(10);
+#endif
+
 }
 
 int64_t one_second = 1000000000;
@@ -233,11 +239,10 @@ nstimer::std_timer::time_capture_t get_time_callback(const nstimer::callback_tim
 #endif
 
 #ifdef NSTIMER_DEFAULT_STD_POSIX_IMPL
-	using namespace std::chrono_literals;
 	if (increment_by_100)
-		g_global_time.tv_nsec += 1000 * 100;
+		g_global_time.tv_nsec += 1000000 * 100;
 	else
-		g_global_time.tv_nsec += 1000;
+		g_global_time.tv_nsec += 1000000;
 #endif
 	increment_by_100 = !increment_by_100;
 	return g_global_time;
@@ -270,8 +275,13 @@ int main()
 	{
 		checking_std_high_resolution_clock();
 		check_std_timer_impl();
-		check_platform_sleep_impl_impl();
+		check_native_thread_sleep();
 	}
-
+#ifdef NSTIMER_CYCLE_TIMER
+	std::cout << "current thread clock: " << nstimer::clock_cycle_timer::clock_counter() << std::endl;
+	std::cout << "active thread core id: " << nstimer::clock_cycle_timer::core_id() << std::endl;
+#else
+	std::cout << "No thread clock impl.\n";
+#endif
 	return 0;
 }

@@ -1,11 +1,34 @@
 
 #include <nstimer.h>
-
-
 #include <iostream>
+
+#ifdef _MSC_VER
+	#include <windows.h>
+#elif _POSIX_C_SOURCE >= 199309L
+	//^ explain yourself !!!
+	#include <time.h>   // for nanosleep
+#else
+	#include <unistd.h> // for usleep
+#endif
 
 namespace nstimer
 {
+	void thread_sleep(int ms_time)
+	{
+#ifdef WIN32
+		Sleep(ms_time);
+#elif _POSIX_C_SOURCE >= 199309L
+		struct timespec ts;
+		ts.tv_sec = ms_time / 1000;
+		ts.tv_nsec = (ms_time % 1000) * 1000000;
+		nanosleep(&ts, NULL);
+#else
+		if (ms_time >= 1000)
+			sleep(ms_time / 1000);
+		usleep((ms_time % 1000) * 1000);
+#endif
+	}
+
 #ifdef NSTIMER_DEFAULT_STD
 	singleton_adapter_std_timer::callback_ptr_t singleton_adapter_std_timer::_callback = nullptr;
 #endif
