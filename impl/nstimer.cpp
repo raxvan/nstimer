@@ -13,7 +13,7 @@
 
 namespace nstimer
 {
-	void thread_sleep(int ms_time)
+	void debug_utils::thread_sleep(int ms_time)
 	{
 #ifdef WIN32
 		Sleep(ms_time);
@@ -27,6 +27,44 @@ namespace nstimer
 			sleep(ms_time / 1000);
 		usleep((ms_time % 1000) * 1000);
 #endif
+	}
+
+	void debug_utils::print_nice_delta(const char* name, const double nanoseconds)
+	{
+		double ddelta = nanoseconds;
+
+		std::cout << "%! DT::" << name << " -> " << uint64_t(ddelta) << " ns";
+
+		if (ddelta > 1000000.0)
+		{
+			// ms
+			ddelta = ddelta / 1000000.0;
+
+			if (ddelta > 1000)
+			{
+				// sec
+				ddelta = ddelta / 1000.0;
+				std::cout << " ~~ " << ddelta << " sec\n";
+			}
+			else
+			{
+				std::cout << " ~~ " << ddelta << " ms\n";
+			}
+		}
+		else if (ddelta > 1000.0)
+		{
+			// ms
+			ddelta = ddelta / 1000000.0;
+			std::cout << " ~~ " << ddelta << " ms\n";
+		}
+		else
+			std::cout << std::endl;
+	}
+	void debug_utils::print_nice_delta(const char* name, const std::chrono::high_resolution_clock::time_point& start, const std::chrono::high_resolution_clock::time_point& end)
+	{
+		std::chrono::duration<double, std::nano> delta = end - start;
+		double									 ddelta = delta.count();
+		print_nice_delta(name, ddelta);
 	}
 
 #ifdef NSTIMER_DEFAULT_STD
@@ -46,37 +84,49 @@ namespace nstimer
 	scope_debug_profiler::~scope_debug_profiler()
 	{
 		auto end = std::chrono::high_resolution_clock::now();
-		print_nice_time(name, start, end);
+		debug_utils::print_nice_delta(name, start, end);
 	}
-	void scope_debug_profiler::print_nice_time(const char* name, const double nanoseconds)
-	{
-		double ddelta = nanoseconds;
-		std::cout << "+[" << name << "] " << uint64_t(ddelta) << " ns";
 
-		if (ddelta > 1000000.0)
+	debug_avrage_timer_impl::debug_avrage_timer_impl(const char* _name)
+		:name(_name)
+	{
+	}
+	void debug_avrage_timer_impl::push_back(int64_t* buffer, std::size_t buffer_size, const int64_t delta_ns)
+	{
+		std::size_t index = count++ % buffer_size;
+		buffer[index] = delta_ns;//add sampls
+
+		if (count % buffer_size == 0)
 		{
-			// ms
-			ddelta = ddelta / 1000000.0;
+			//time to display avrage
+			count = buffer_size;
 
-			if (ddelta > 1000)
+			const int64_t* end = buffer + buffer_size;
+			const double ratio = 1.0 / double(buffer_size);
+			double avrage = 0.0;
+			while (buffer != end)
 			{
-				// sec
-				ddelta = ddelta / 1000.0;
-				std::cout << " -> " << ddelta << " sec";
+				avrage += double(*buffer++) * ratio;
 			}
-			else
-			{
-				std::cout << " -> " << ddelta << " ms";
-			}
+			debug_utils::print_nice_delta(name, avrage);
 		}
-		std::cout << std::endl;
 	}
-	void scope_debug_profiler::print_nice_time(const char * name, const std::chrono::high_resolution_clock::time_point& start, const std::chrono::high_resolution_clock::time_point& end)
+	void debug_avrage_timer_impl::print_results(const int64_t* buffer, std::size_t buffer_size)
 	{
-		std::chrono::duration<double, std::nano> delta = end - start;
-		double									 ddelta = delta.count();
-		print_nice_time(name,ddelta);
+		std::size_t size = buffer_size;
+		if (count < buffer_size)
+			size = count;
+
+		const int64_t* end = buffer + size;
+		const double ratio = 1.0 / double(size);
+		double avrage = 0.0;
+		while (buffer != end)
+		{
+			avrage += double(*buffer++) * ratio;
+		}
+		debug_utils::print_nice_delta(name, avrage);
 	}
+	
 
 
 }

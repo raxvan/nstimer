@@ -47,6 +47,11 @@ namespace nstimer
 			return m_init_time;
 		}
 
+		inline int64_t duration_ns() const
+		{
+			return delta_ns(m_init_time, std_timer::capture_now_time());
+		}
+
 	protected:
 		time_capture_t m_init_time = std_timer::capture_now_time();
 	};
