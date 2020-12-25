@@ -33,7 +33,7 @@ namespace nstimer
 	{
 		double ddelta = nanoseconds;
 
-		std::cout << "%! DT::" << name << " -> " << uint64_t(ddelta) << " ns";
+		std::cout << "%![dt]:" << name << "=" << uint64_t(ddelta) << "ns";
 
 		if (ddelta > 1000000.0)
 		{
