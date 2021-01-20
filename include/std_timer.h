@@ -26,6 +26,10 @@ namespace nstimer
 		{
 			return (r) * (int64_t)1e9;
 		}
+		static inline int64_t ms_to_ns(const int64_t r)
+		{
+			return (r) * (int64_t)1000000;
+		}
 	public:
 		std_timer() = default;
 
@@ -85,7 +89,10 @@ namespace nstimer
 		{
 			return (r) * (int64_t)1e9;
 		}
-
+		static inline int64_t ms_to_ns(const int64_t r)
+		{
+			return (r) * (int64_t)1000000;
+		}
 	public:
 		std_timer() = default;
 
