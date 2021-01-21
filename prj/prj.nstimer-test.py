@@ -8,5 +8,5 @@ ctx.run("exe",
 	depends = [
 		"prj.nstimer.py"
 	],
-	src = ctx.glob("test",[".cpp",".h"])
+	src = ctx.glob("../test",[".cpp",".h"])
 )
