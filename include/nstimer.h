@@ -14,6 +14,7 @@ namespace nstimer
 		static void thread_sleep(int ms_time);
 		static void print_nice_delta(const char* name, const std::chrono::high_resolution_clock::time_point& start, const std::chrono::high_resolution_clock::time_point& end);
 		static void print_nice_delta(const char* name, const double nanoseconds);
+		static const char* format_nice_delta(char* buffer, const std::size_t buffer_size, const double nanoseconds);
 	};
 
 	//--------------------------------------------------------------------------------------------------------------------------------

@@ -29,6 +29,35 @@ namespace nstimer
 #endif
 	}
 
+	const char* debug_utils::format_nice_delta(char* buffer, const std::size_t buffer_size, const double nanoseconds)
+	{
+		double ddelta = nanoseconds;
+		if (ddelta > 1000000.0)
+		{
+			//1 ms
+			ddelta = ddelta / 1000000.0;
+
+			if (ddelta > 1000)
+			{
+				// sec
+				ddelta = ddelta / 1000.0;
+				std::snprintf(buffer, buffer_size, "%lf sec", ddelta);
+			}
+			else
+			{
+				std::snprintf(buffer, buffer_size, "%lf ms", ddelta);
+			}
+		}
+		else if (ddelta > 1000.0)
+		{
+			// ms
+			ddelta = ddelta / 1000000.0;
+			std::snprintf(buffer, buffer_size, "%lf ms", ddelta);
+		}
+
+		return buffer;
+	}
+
 	void debug_utils::print_nice_delta(const char* name, const double nanoseconds)
 	{
 		double ddelta = nanoseconds;
