@@ -1,12 +1,15 @@
 
 #include <nstimer.h>
 #include <iostream>
-
+#include <thread>
 
 
 namespace nstimer
 {
 	void debug_utils::thread_sleep(int ms_time)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(ms_time));
+	}
 
 	const char* debug_utils::format_nice_delta(char* buffer, const std::size_t buffer_size, const double nanoseconds)
 	{
