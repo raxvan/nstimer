@@ -1,7 +1,7 @@
 
 #pragma once
 
-#ifdef PRJ_PLATFORM_IS_WIN32
+#ifdef BUILD_PLATFORM_WIN32
 #	include <intrin.h>
 #endif
 

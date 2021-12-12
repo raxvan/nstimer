@@ -3,10 +3,10 @@
 
 #include <nstimer.h>
 
-#ifdef PRJ_PLATFORM_IS_WIN32
+#ifdef BUILD_PLATFORM_WIN32
 #include <windows.h>
 #endif
-#ifdef PRJ_PLATFORM_IS_LINUX
+#ifdef BUILD_PLATFORM_LINUX
 #include <unistd.h>
 #endif
 
@@ -99,10 +99,10 @@ void check_native_thread_sleep()
 {
 	std::cout << "check_native_thread_sleep:\n";
 
-#ifdef PRJ_PLATFORM_IS_WIN32
+#ifdef BUILD_PLATFORM_WIN32
 	#define PLATFORM_SLEEP Sleep
 #endif
-#ifdef PRJ_PLATFORM_IS_LINUX
+#ifdef BUILD_PLATFORM_LINUX
 	//usleep microseconds
 	#define PLATFORM_SLEEP(MS) usleep(MS * 1000)
 #endif

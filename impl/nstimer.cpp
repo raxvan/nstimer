@@ -2,32 +2,11 @@
 #include <nstimer.h>
 #include <iostream>
 
-#ifdef _MSC_VER
-	#include <windows.h>
-#elif _POSIX_C_SOURCE >= 199309L
-	//^ explain yourself !!!
-	#include <time.h>   // for nanosleep
-#else
-	#include <unistd.h> // for usleep
-#endif
+
 
 namespace nstimer
 {
 	void debug_utils::thread_sleep(int ms_time)
-	{
-#ifdef WIN32
-		Sleep(ms_time);
-#elif _POSIX_C_SOURCE >= 199309L
-		struct timespec ts;
-		ts.tv_sec = ms_time / 1000;
-		ts.tv_nsec = (ms_time % 1000) * 1000000;
-		nanosleep(&ts, NULL);
-#else
-		if (ms_time >= 1000)
-			sleep(ms_time / 1000);
-		usleep((ms_time % 1000) * 1000);
-#endif
-	}
 
 	const char* debug_utils::format_nice_delta(char* buffer, const std::size_t buffer_size, const double nanoseconds)
 	{
