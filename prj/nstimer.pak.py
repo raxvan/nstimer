@@ -1,10 +1,17 @@
 
+def configure(cfg):
+	cfg.link_if_enabled("../../ttf/testing.pak.py")
+
+
 def construct(ctx):
 	
-	ctx.prop("type","lib")
+	ctx.config("type","lib")
 
-	ctx.path("public include: ../include")
+	ctx.folder("public include: ../incl")
 
-	ctx.fscan("src: ../include")
-	ctx.fscan("src: ../impl")
+	ctx.fscan("src: ../incl")
+	ctx.fscan("src: ../src")
+
+	if ctx.module_enabled("testing"):
+		ctx.assign("public define:NSTIMER_TESTING")
 

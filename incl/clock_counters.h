@@ -1,7 +1,7 @@
 
 #pragma once
 
-#ifdef BUILD_PLATFORM_WIN32
+#ifdef NSTIMER_PLATFORM_WIN32
 #	include <intrin.h>
 #endif
 

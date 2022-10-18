@@ -3,10 +3,10 @@
 
 #include <nstimer.h>
 
-#ifdef BUILD_PLATFORM_WIN32
+#ifdef NSTIMER_PLATFORM_WIN32
 #include <windows.h>
 #endif
-#ifdef BUILD_PLATFORM_LINUX
+#ifdef NSTIMER_PLATFORM_LINUX
 #include <unistd.h>
 #endif
 
@@ -94,15 +94,14 @@ void check_std_timer_impl()
 	print_results(1500.0, t7, t8);
 }
 
-
 void check_native_thread_sleep()
 {
 	std::cout << "check_native_thread_sleep:\n";
 
-#ifdef BUILD_PLATFORM_WIN32
+#ifdef NSTIMER_PLATFORM_WIN32
 	#define PLATFORM_SLEEP Sleep
 #endif
-#ifdef BUILD_PLATFORM_LINUX
+#ifdef NSTIMER_PLATFORM_LINUX
 	//usleep microseconds
 	#define PLATFORM_SLEEP(MS) usleep(MS * 1000)
 #endif

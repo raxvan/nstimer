@@ -1,4 +1,5 @@
 
+#include <ttf.h>
 #include <nstimer.h>
 #include <clock_counters.h>
 #include <iostream>
@@ -248,40 +249,48 @@ nstimer::std_timer::time_capture_t get_time_callback(const nstimer::callback_tim
 	return g_global_time;
 }
 
-int main()
+
+void test_std_timer()
 {
 	std::cout << "Running test local=[std_timer],global=[std_timer]\n";
 	auto test1_err = run_tests<nstimer::std_timer, nstimer::std_timer>(&gTimer);
+	TEST_ASSERT(test1_err == false);
+}
 
+void test_callback_timer()
+{
 	std::cout << "Running test local=[callback_timer<std_timer>],global=[std_timer]\n";
 	auto test2_err = run_tests<nstimer::callback_timer<nstimer::std_timer>, nstimer::std_timer>(&gTimer);
+	TEST_ASSERT(test2_err == false);
+}
 
+void test_user_timer()
+{
 	std::cout << "Running test local/global=[callback_timer<std_timer>] + set_global_callback`\n";
 	nstimer::callback_timer<nstimer::std_timer>::set_global_callback(get_time_callback);
-
 	auto test3_err = run_tests<nstimer::callback_timer<nstimer::std_timer>, nstimer::callback_timer<nstimer::std_timer>>(&gsTimer);
+	TEST_ASSERT(test3_err == false);
+}
 
-
-	if (test1_err || test2_err || test3_err)
-	{
-		std::cout << "FAILED.\n";
-		return -1;
-	}
-	else
-	{
-		std::cout << "OK.\n";
-	}
-
-	{
-		checking_std_high_resolution_clock();
-		check_std_timer_impl();
-		check_native_thread_sleep();
-	}
+void test_main()
+{
 #ifdef NSTIMER_CYCLE_TIMER
 	std::cout << "current thread clock: " << nstimer::clock_cycle_timer::clock_counter() << std::endl;
 	std::cout << "active thread core id: " << nstimer::clock_cycle_timer::core_id() << std::endl;
 #else
 	std::cout << "No thread clock impl.\n";
 #endif
-	return 0;
+
+	TEST_FUNCTION(test_std_timer);
+	TEST_FUNCTION(test_callback_timer);
+	TEST_FUNCTION(test_user_timer);
+
+	{
+		TEST_FUNCTION(checking_std_high_resolution_clock);
+		TEST_FUNCTION(check_std_timer_impl);
+		TEST_FUNCTION(check_native_thread_sleep);
+	}
 }
+
+TEST_MAIN(test_main);
+

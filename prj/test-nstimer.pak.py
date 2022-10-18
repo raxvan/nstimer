@@ -1,9 +1,11 @@
 
+def configure(cfg):
+	cfg.link("../../ttf/testing.pak.py").enable()
+	cfg.link("nstimer.pak.py")
+
+
 def construct(ctx):
 	
-	ctx.prop("type","exe")
-	ctx.prop("define global: TESTING_BUILD")
+	ctx.config("type","exe")
 
 	ctx.fscan("src: ../test")
-
-	ctx.dependency("nstimer.pak.py")
