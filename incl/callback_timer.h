@@ -45,6 +45,7 @@ namespace nstimer
 		{
 			return std_timer::delta_ns(a, b);
 		}
+
 	public:
 		static inline callback_timer_storage::storage_t& set_global_callback(callback_ptr_t _func)
 		{
@@ -58,12 +59,12 @@ namespace nstimer
 	};
 #	endif
 
-
 	template <class T>
 	struct callback_timer : public callback_timer_impl<T>
 	{
 	public:
 		using base_t = callback_timer_impl<T>;
+
 	public:
 		inline void reset()
 		{

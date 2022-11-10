@@ -16,14 +16,13 @@ void wait()
 #ifdef NSTIMER_DEFAULT_STD_POSIX_IMPL
 	usleep(10);
 #endif
-
 }
 
 int64_t one_second = 1000000000;
 
-nstimer::std_timer					gTimer;
-nstimer::callback_timer<nstimer::std_timer> 	gsTimer;
-nstimer::std_timer::time_capture_t 	g_global_time = nstimer::std_timer::capture_now_time();
+nstimer::std_timer							gTimer;
+nstimer::callback_timer<nstimer::std_timer> gsTimer;
+nstimer::std_timer::time_capture_t			g_global_time = nstimer::std_timer::capture_now_time();
 
 template <class A, class T>
 void test_timer(T* t, bool& err)
@@ -225,8 +224,6 @@ bool run_tests(T* global_timer)
 	return err;
 }
 
-
-
 nstimer::std_timer::time_capture_t get_time_callback(const nstimer::callback_timer_storage::storage_t&)
 {
 
@@ -248,7 +245,6 @@ nstimer::std_timer::time_capture_t get_time_callback(const nstimer::callback_tim
 	increment_by_100 = !increment_by_100;
 	return g_global_time;
 }
-
 
 void test_std_timer()
 {
@@ -293,4 +289,3 @@ void test_main()
 }
 
 TEST_MAIN(test_main);
-

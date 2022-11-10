@@ -4,10 +4,10 @@
 #include <nstimer.h>
 
 #ifdef NSTIMER_PLATFORM_WIN32
-#include <windows.h>
+#	include <windows.h>
 #endif
 #ifdef NSTIMER_PLATFORM_LINUX
-#include <unistd.h>
+#	include <unistd.h>
 #endif
 
 #define STD_THREAD_SLEEP(MS) std::this_thread::sleep_for(std::chrono::milliseconds(MS));
@@ -35,8 +35,7 @@ void checking_std_high_resolution_clock()
 	STD_THREAD_SLEEP(1500);
 	auto t8 = std::chrono::high_resolution_clock::now();
 
-	auto print_results = [](double waitms, const auto& start, const auto& end)
-	{
+	auto print_results = [](double waitms, const auto& start, const auto& end) {
 		auto	delta = end - start;
 		auto	deltans = std::chrono::duration_cast<std::chrono::nanoseconds>(delta);
 		int64_t iv = (int64_t)deltans.count();
@@ -54,7 +53,6 @@ void checking_std_high_resolution_clock()
 	print_results(1500.0, t7, t8);
 #endif
 }
-
 
 void check_std_timer_impl()
 {
@@ -78,8 +76,7 @@ void check_std_timer_impl()
 	STD_THREAD_SLEEP(1500);
 	auto t8 = nstimer::std_timer::capture_now_time();
 
-	auto print_results = [](double waitms, const auto& start, const auto& end)
-	{
+	auto print_results = [](double waitms, const auto& start, const auto& end) {
 		int64_t iv = nstimer::std_timer::delta_ns(start, end);
 		std::cout << waitms << " ms sleep == " << iv << " ns => [1 ms ~ " << int64_t(double(iv) / waitms) << " ns]\n";
 	};
@@ -99,11 +96,11 @@ void check_native_thread_sleep()
 	std::cout << "check_native_thread_sleep:\n";
 
 #ifdef NSTIMER_PLATFORM_WIN32
-	#define PLATFORM_SLEEP Sleep
+#	define PLATFORM_SLEEP Sleep
 #endif
 #ifdef NSTIMER_PLATFORM_LINUX
-	//usleep microseconds
-	#define PLATFORM_SLEEP(MS) usleep(MS * 1000)
+// usleep microseconds
+#	define PLATFORM_SLEEP(MS) usleep(MS * 1000)
 #endif
 	using timepoint_t = nstimer::std_timer::time_capture_t;
 
@@ -125,8 +122,7 @@ void check_native_thread_sleep()
 	PLATFORM_SLEEP(1500);
 	auto t8 = nstimer::std_timer::capture_now_time();
 
-	auto print_results = [](double waitms, const timepoint_t& start, const timepoint_t& end)
-	{
+	auto print_results = [](double waitms, const timepoint_t& start, const timepoint_t& end) {
 		int64_t iv = nstimer::std_timer::delta_ns(start, end);
 		std::cout << waitms << " ms sleep == " << iv << " ns => [1 ms ~ " << int64_t(double(iv) / waitms) << " ns]\n";
 	};

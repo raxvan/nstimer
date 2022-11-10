@@ -93,8 +93,8 @@ namespace nstimer
 			m_init_time = now_time;
 			return r;
 		}
+
 	protected:
 		time_capture_t m_init_time = std_timer::capture_now_time();
 	};
 }
-

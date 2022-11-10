@@ -3,7 +3,6 @@
 #include <iostream>
 #include <thread>
 
-
 namespace nstimer
 {
 	void debug_utils::thread_sleep(int ms_time)
@@ -16,7 +15,7 @@ namespace nstimer
 		double ddelta = nanoseconds;
 		if (ddelta > 1000000.0)
 		{
-			//1 ms
+			// 1 ms
 			ddelta = ddelta / 1000000.0;
 
 			if (ddelta > 1000)
@@ -86,7 +85,6 @@ namespace nstimer
 	callback_timer_storage::storage_t callback_timer_storage::g_storage;
 #endif
 
-
 	scope_debug_profiler::scope_debug_profiler(const char* _name)
 		: name(_name)
 	{
@@ -99,22 +97,22 @@ namespace nstimer
 	}
 
 	debug_avrage_timer_impl::debug_avrage_timer_impl(const char* _name)
-		:name(_name)
+		: name(_name)
 	{
 	}
 	void debug_avrage_timer_impl::push_back(int64_t* buffer, std::size_t buffer_size, const int64_t delta_ns)
 	{
 		std::size_t index = count++ % buffer_size;
-		buffer[index] = delta_ns;//add sampls
+		buffer[index] = delta_ns; // add sampls
 
 		if (count % buffer_size == 0)
 		{
-			//time to display avrage
+			// time to display avrage
 			count = buffer_size;
 
 			const int64_t* end = buffer + buffer_size;
-			const double ratio = 1.0 / double(buffer_size);
-			double avrage = 0.0;
+			const double   ratio = 1.0 / double(buffer_size);
+			double		   avrage = 0.0;
 			while (buffer != end)
 			{
 				avrage += double(*buffer++) * ratio;
@@ -129,15 +127,13 @@ namespace nstimer
 			size = count;
 
 		const int64_t* end = buffer + size;
-		const double ratio = 1.0 / double(size);
-		double avrage = 0.0;
+		const double   ratio = 1.0 / double(size);
+		double		   avrage = 0.0;
 		while (buffer != end)
 		{
 			avrage += double(*buffer++) * ratio;
 		}
 		debug_utils::print_nice_delta(name, avrage);
 	}
-	
-
 
 }

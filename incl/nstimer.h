@@ -11,9 +11,9 @@ namespace nstimer
 {
 	struct debug_utils
 	{
-		static void thread_sleep(int ms_time);
-		static void print_nice_delta(const char* name, const std::chrono::high_resolution_clock::time_point& start, const std::chrono::high_resolution_clock::time_point& end);
-		static void print_nice_delta(const char* name, const double nanoseconds);
+		static void		   thread_sleep(int ms_time);
+		static void		   print_nice_delta(const char* name, const std::chrono::high_resolution_clock::time_point& start, const std::chrono::high_resolution_clock::time_point& end);
+		static void		   print_nice_delta(const char* name, const double nanoseconds);
 		static const char* format_nice_delta(char* buffer, const std::size_t buffer_size, const double nanoseconds);
 	};
 
@@ -28,17 +28,16 @@ namespace nstimer
 		~scope_debug_profiler();
 	};
 
-
 	//--------------------------------------------------------------------------------------------------------------------------------
 
-	template<class C>
+	template <class C>
 	struct scope_delta_accumulator
 	{
 		std::chrono::high_resolution_clock::time_point start;
-		C& container;
+		C&											   container;
 
 		inline scope_delta_accumulator(C& _container)
-			:container(_container)
+			: container(_container)
 		{
 			start = std::chrono::high_resolution_clock::now();
 		}
@@ -49,7 +48,7 @@ namespace nstimer
 		}
 	};
 
-	//--------------------------------------------------------------------------------------------------------------------------------	
+	//--------------------------------------------------------------------------------------------------------------------------------
 
 	struct debug_avrage_timer_impl
 	{
@@ -67,12 +66,14 @@ namespace nstimer
 	struct debug_avrage_delta : public debug_avrage_timer_impl
 	{
 	public:
-		using scope_t = scope_delta_accumulator< debug_avrage_delta<N> >;
+		using scope_t = scope_delta_accumulator<debug_avrage_delta<N>>;
+
 	protected:
-		int64_t		samples[N];
+		int64_t samples[N];
+
 	public:
 		inline debug_avrage_delta(const char* name)
-			:debug_avrage_timer_impl(name)
+			: debug_avrage_timer_impl(name)
 		{
 		}
 		inline ~debug_avrage_delta()
@@ -91,6 +92,5 @@ namespace nstimer
 	};
 
 	//--------------------------------------------------------------------------------------------------------------------------------
-
 
 }
