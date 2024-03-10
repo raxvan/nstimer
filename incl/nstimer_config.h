@@ -3,7 +3,7 @@
 
 #define NSTIMER_DEFAULT_STD
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__APPLE__)
 #	define NSTIMER_DEFAULT_STD_CHRONO_IMPL // use std::chrono
 #else
 #	define NSTIMER_DEFAULT_STD_POSIX_IMPL // use clock_gettime;
@@ -14,11 +14,3 @@
 
 //----------------------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------------------
-
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-#	define NSTIMER_PLATFORM_WIN32
-#endif
-
-#if __linux__
-#	define NSTIMER_PLATFORM_LINUX
-#endif

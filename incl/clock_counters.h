@@ -1,7 +1,7 @@
 
 #pragma once
 
-#ifdef NSTIMER_PLATFORM_WIN32
+#if _MSC_VER >= 1400 && (defined(_M_AMD64) || defined(_M_X64) || defined(_M_IX86))
 #	include <intrin.h>
 #endif
 

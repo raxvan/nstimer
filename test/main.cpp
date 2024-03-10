@@ -13,8 +13,16 @@ void wait()
 	std::this_thread::yield();
 #endif
 
+#if __APPLE__
+	struct timespec sleepTime;
+	sleepTime.tv_sec = 0; // Seconds
+    sleepTime.tv_nsec = 1000000 * 10;
+    nanosleep(&sleepTime, nullptr);
+
+#else
 #ifdef NSTIMER_DEFAULT_STD_POSIX_IMPL
 	usleep(10);
+#endif
 #endif
 }
 
@@ -282,9 +290,12 @@ void test_main()
 	TEST_FUNCTION(test_user_timer);
 
 	{
+		#ifdef NSTIMER_DEFAULT_STD_CHRONO_IMPL
 		TEST_FUNCTION(checking_std_high_resolution_clock);
-		TEST_FUNCTION(check_std_timer_impl);
-		TEST_FUNCTION(check_native_thread_sleep);
+		#endif
+		
+		TEST_FUNCTION(check_std_timer_vs_chrono_sleep);
+		TEST_FUNCTION(check_std_timer_vs_platform_sleep);
 	}
 }
 
